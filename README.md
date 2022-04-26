@@ -19,7 +19,7 @@ data
 
 * Arsenault_spectral_function_v3.py generates mock datasets
 * for both parameter sets: Arsenault_param.txt Arsenault_easy_param.txt
-* readme.md: generate spectral functions for other beta'
+* readme.md: generate spectral functions for other beta's or other parameter values
 
 test-data
 
