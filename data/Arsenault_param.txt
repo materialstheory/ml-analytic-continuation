@@ -1,0 +1,18 @@
+0.2   # clim1: in (0, 1), symmetric bound of normalized spectral range, beyond which no high weight peaks
+0.3   # clim2: in (0, 1), symmetric bound of normalized spectral range, beyond which no sharp peaks
+0.8   # clim3: in (0, 1), symmetric bound of normalized psectral range, beyond which no peak center
+0.015 # sigma_c_lower: sampling range for standard deviation of a single Gaussian peak centered within clim1
+0.1   # sigma_c_upper: sampling range for standard deviation of a single Gaussian peak centered within clim1
+0.06  # sigma_o_lower: ***, beyond clim1
+0.3   # sigma_o_upper: ***, beyond clim1
+5e-4  # delta: vanishing threshold at boundary
+0.5   # cr1: lower bound of sampling range for weight of a single Gaussian peak centered within clim2
+1     # cr2: upper bound of sampling range for weight of a single Gaussian peak centered within clim2
+0     # cr3: lower bound of sampling range for weight of a single Gaussian peak centered beyond clim2
+0.6   # cr4: upper bound of sampling range for weight of a single Gaussian peak centered beyond clim2
+1e-2  # cr_thr: the vanishing criteria is hard to satisfy, we shrink the weight of most problematic peak, until it reaches cr_thr, then we reduce the spread until it is out of the sampling range, then remove it.
+1e-6  # delta_smooth: integral of the second derivative must be limited
+8     # lower bound of total number of peaks
+34    # upper bound of total number of peaks
+0     # lower bound of number of peaks within clim1
+4     # upper bound of number of peaks within clim1
