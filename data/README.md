@@ -8,6 +8,6 @@
   python Arsenault_spectral_function_v3.py 32000
   ```
 
-* change omega range: line 337 Arsenault_spectral_function_v3.py
+* change omega grid: line 16, 17 Arsenault_spectral_function_v3.py
 
 * change parameters: *.txt
