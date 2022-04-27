@@ -13,12 +13,9 @@ import shutil
 import pickle
 
 empty_dict = {"wr":[], "sigmar":[], "ar":[], "cr":[], "R":[], "R_center":[]}
+omegac = 8
+Nomega = 800
 
-def create_directory (path):
-    dirpath=str(path)
-    if os.path.isdir(dirpath):
-        shutil.rmtree(dirpath,ignore_errors=True)
-    os.mkdir(dirpath)
 
 def A_w(wr, sigmar, ar, cr, omega):
     """
@@ -177,7 +174,7 @@ class Arsenault_spectral_function:
     
     def print_theta_omega(self, res, omega, omega_0, factor = 1):
         """
-        not used?
+        not used
         """
         A_omega = np.zeros((len(res["wr"]), omega.shape[0]))
         for j in range(len(res["wr"])):
@@ -191,7 +188,7 @@ class Arsenault_spectral_function:
         """
         include small variation of the spectral functions
         return dict containing parameters
-        not in use?
+        not in use
         """
         self.res_var = copy.deepcopy(self.empty_dict)
         
@@ -228,11 +225,6 @@ class Arsenault_spectral_function:
         
         for i in range(len(self.res["wr"])):
             wr, sigmar, ar, cr, R, R_center = list(map(lambda x: self.res[x][i], tuple(self.res)))
-            
-
-            
-            
-            # RZ: keep it like this, we can removed non-vanishing data just before training. only 3% of the whole dataset has this problem
             
             for j in range(100):
                 ind1 = np.random.choice(R, size = 1, replace = False)                
@@ -290,7 +282,7 @@ def load_create(Arsenault_spectral_function, n_repeat, filename):
     return: Arsenault_spectral_function class object
     """
     params = np.loadtxt(filename)
-    omega = np.linspace(-1, 1, 800)
+    omega = np.linspace(-1, 1, Nomega)
     return_obj = Arsenault_spectral_function(omega, 
                                              params[0:3], params[3:5], params[5:7], 
                                              params[7], params[8:12], params[12], params[13])
@@ -305,7 +297,7 @@ def augmentation(Arsenault):
     return linear and scaling augmentated spectral functions and the original one
     """
 
-    omega = np.linspace(-8, 8, 800)
+    omega = np.linspace(-omegac, omegac, Nomega)
 
     A = Arsenault.print(Arsenault.res, omega)
     _ = Arsenault.build_linear()
@@ -323,24 +315,25 @@ def augmentation(Arsenault):
 def main():
     """
     generate N spectral functions with summation normalization
+    for reproducibility, the following is quite verbose
     """
     start_time = time.time()
     print('Starting generating spectral functions A_omega')
 
-    np.random.seed(123456)
+    np.random.seed(42) #123456 for test set
     Arsenault_train = load_create(Arsenault_spectral_function, repetitions, "Arsenault_param.txt")
     Arsenault_val   = load_create(Arsenault_spectral_function, repetitions, "Arsenault_param.txt")
     easy_train      = load_create(Arsenault_spectral_function, repetitions, "Arsenault_easy_param.txt")
     easy_val        = load_create(Arsenault_spectral_function, repetitions, "Arsenault_easy_param.txt")
 
 
-    omega = np.linspace(-8, 8, 800)
+    omega = np.linspace(-omegac, omegac, Nomega)
     A_omega_train_aug = augmentation(Arsenault_train)
     A_omega_val_aug = augmentation(Arsenault_val)
     A_easy_omega_train_aug = augmentation(easy_train)
     A_easy_omega_val_aug = augmentation(easy_val)
     
-    normalize = lambda arr: arr*16/800
+    normalize = lambda arr: arr*(2*omegac)/Nomega
 
     A_omega_train_aug = normalize(A_omega_train_aug)
     A_omega_val_aug = normalize(A_omega_val_aug)
