@@ -13,13 +13,15 @@ from scipy.linalg import svd
 
 o2l = np.load("o2l_b40.npy")
 u_, s_, vh_ = svd(o2l)
-
+Lmax = o2l.shape[0]
 u = tf.constant(u_.astype('float32'))
-vh = tf.constant(vh_[:80,:].astype('float32'))
+vh = tf.constant(vh_[:Lmax,:].astype('float32'))
 s = tf.constant(np.diag(s_).astype('float32'))
-omega = np.linspace(-8, 8, 800)
+omegac = 8
+Nomega = 800
+omega = np.linspace(-omegac, omegac, Nomega)
 omega_t = tf.constant(omega.astype('float32'))
-omega_t = tf.reshape(omega_t, (1, 1, 800))
+omega_t = tf.reshape(omega_t, (1, 1, Nomega))
 
 
 # neural network 
@@ -70,18 +72,18 @@ def A2G(A):
     G = tf.einsum('ij,nj->ni', vh, A)
     G = tf.einsum('ij,nj->ni', s, G)
     G = tf.einsum('ij,nj->ni', u, G)
-    return 800/16*G
+    return Nomega/(2*omegac)*G
 
 #y = tf.keras.layers.Lambda(lambda _: tf.random.normal(shape=(32,10), name="noise", dtype=tf.float64), dtype=tf.float64)(i)
 
 def aug(A0, batch_size):
     
     
-    wr = Lambda(lambda batch_size: tf.random.uniform(shape = (batch_size, 10, 1), minval = -0.8, maxval = 0.8)*8 )(batch_size)
+    wr = Lambda(lambda batch_size: tf.random.uniform(shape = (batch_size, 10, 1), minval = -0.8, maxval = 0.8)*omegac )(batch_size)
     
     #wr = tf.random.uniform(shape = (batch_size, 10, 1), minval = -0.8, maxval = 0.8)*8
     
-    sigmar = Lambda(lambda batch_size: tf.random.uniform(shape = (batch_size, 10, 1), minval = 0.05, maxval = 0.2)*8 )(batch_size)
+    sigmar = Lambda(lambda batch_size: tf.random.uniform(shape = (batch_size, 10, 1), minval = 0.05, maxval = 0.2)*omegac )(batch_size)
     
     #sigmar = tf.random.uniform(shape = (batch_size, 10, 1), minval = 0.05, maxval = 0.2)*8
     
@@ -94,22 +96,22 @@ def aug(A0, batch_size):
     dA = tf.einsum('ijk->ik', dA)
     cr_sum = tf.einsum('ijk->ik', cr)
     
-    A = (A0 + dA*16/800)/(cr_sum + 1)
+    A = (A0 + dA*(2*omegac)/Nomega)/(cr_sum + 1)
     
     return A
     
 
 
 def custom_loss_function(x_true, out_pred):
-    A_pred = out_pred[:, :800]
-    A_true = out_pred[:,  800:]
+    A_pred = out_pred[:, :Nomega]
+    A_true = out_pred[:,  Nomega:]
     
     MAE = tf.abs(A_true - A_pred)
     return tf.reduce_mean(MAE, axis=-1)
 
 def custom_metric_function(x_true, out_pred):
-    A_pred = out_pred[:, :800]
-    A_true = out_pred[:,  800:]
+    A_pred = out_pred[:, :Nomega]
+    A_true = out_pred[:,  Nomega:]
     
     MAE = tf.abs(A_true - A_pred)
     return tf.reduce_mean(MAE, axis=-1)
@@ -117,27 +119,19 @@ def custom_metric_function(x_true, out_pred):
 
 def create_model_aug(noise_level, nodes):
     
-    output_shape = 800
+    output_shape = Nomega
     
-    inputs = keras.Input(shape=(80,))
-    x = Dense(nodes, input_shape = (80,), activation='selu')(16/800*inputs)
+    inputs = keras.Input(shape=(Lmax,))
+    x = Dense(nodes, input_shape = (Lmax,), activation='selu')((2*omegac)/Nomega*inputs)
     x = ResResResBlocks(x, nodes, 0.1, 2, 2, 2, 2)
-    
-    #output_l = Dense(400, activation='softmax')(x) * tf.reshape(tf.einsum('ni,i->n', inputs, leg_fac_l)/(-40), [-1, 1])
-    #output_r = Dense(400, activation='softmax')(x) * tf.reshape(tf.einsum('ni,i->n', inputs, leg_fac_r)/(-40), [-1, 1])
-    #outputs = Concatenate(axis = -1)([output_l, output_r])
-    #outputs = tf.reshape(outputs, [-1, 800])
-    outputs = Dense(800, activation='softmax')(x)
+    outputs = Dense(Nomega, activation='softmax')(x)
     
     model_G2A = keras.Model(inputs=inputs, outputs = outputs, name = 'G2A')
     
     
-    inputs = keras.Input(shape=(800,))
+    inputs = keras.Input(shape=(Nomega,))
     
     symbolic_shape = K.shape(inputs)
-    #noise_shape = [symbolic_shape[axis] if shape is None else shape
-    #               for axis, shape in enumerate(self.noise_shape)]
-    #G0 = inputs
     A = aug(inputs, symbolic_shape[0])
     G0 = A2G(A)
     G0 = GaussianNoise(stddev = noise_level)(G0)
@@ -154,23 +148,20 @@ def create_model_aug(noise_level, nodes):
     
 def create_model(noise_level, nodes):
     
-    output_shape = 800
+    output_shape = Nomega
     
-    inputs = keras.Input(shape=(80,))
-    x = Dense(nodes, input_shape = (80,), activation='selu')(16/800*inputs)
+    inputs = keras.Input(shape=(Lmax,))
+    x = Dense(nodes, input_shape = (Lmax,), activation='selu')((2*omegac)/Nomega*inputs)
     x = ResResResBlocks(x, nodes, 0.1, 2, 2, 2, 2)
-    outputs = Dense(800, activation='softmax')(x)
+    outputs = Dense(Nomega, activation='softmax')(x)
     
     model_G2A = keras.Model(inputs=inputs, outputs = outputs, name = 'G2A')
     
     
-    inputs = keras.Input(shape=(800,))
+    inputs = keras.Input(shape=(Nomega,))
     
     symbolic_shape = K.shape(inputs)
-    #noise_shape = [symbolic_shape[axis] if shape is None else shape
-    #               for axis, shape in enumerate(self.noise_shape)]
-    #G0 = inputs
-    A = inputs #aug(inputs, symbolic_shape[0], K.learning_phase())
+    A = inputs 
     G0 = A2G(A)
     G0 = GaussianNoise(stddev = noise_level)(G0)
     if K.learning_phase() == False:
