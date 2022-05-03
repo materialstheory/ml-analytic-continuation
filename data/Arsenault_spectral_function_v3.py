@@ -1,11 +1,9 @@
 """
 To generate spectral functions (both Arsenault and easy): final version
 """
-import matplotlib
 
 import numpy as np
 import random
-import matplotlib.pyplot as plt 
 from scipy.integrate import simps
 import time,sys,os
 import copy
@@ -333,7 +331,7 @@ def main():
     A_easy_omega_train_aug = augmentation(easy_train)
     A_easy_omega_val_aug = augmentation(easy_val)
     
-    normalize = lambda arr: arr*(2*omegac)/Nomega
+    normalize = lambda arr: arr*(2*omegac)/(Nomega-1)
 
     A_omega_train_aug = normalize(A_omega_train_aug)
     A_omega_val_aug = normalize(A_omega_val_aug)
