@@ -11,9 +11,10 @@ import tensorflow.keras.backend as K
 
 from scipy.linalg import svd
 
-o2l = np.load("o2l_b40.npy")
-u_, s_, vh_ = svd(o2l)
-Lmax = o2l.shape[0]
+u_, s_, vh_ = np.load("../kernel/u_mp.npy"), np.load("../kernel/s_mp.npy")[:,0], np.load("../kernel/vh_mp.npy")
+#o2l = np.load("o2l_b40.npy")
+#u_, s_, vh_ = svd(o2l)
+Lmax = u_.shape[0]
 u = tf.constant(u_.astype('float32'))
 vh = tf.constant(vh_[:Lmax,:].astype('float32'))
 s = tf.constant(np.diag(s_).astype('float32'))
@@ -72,7 +73,7 @@ def A2G(A):
     G = tf.einsum('ij,nj->ni', vh, A)
     G = tf.einsum('ij,nj->ni', s, G)
     G = tf.einsum('ij,nj->ni', u, G)
-    return Nomega/(2*omegac)*G
+    return (Nomega-1)/(2*omegac)*G
 
 #y = tf.keras.layers.Lambda(lambda _: tf.random.normal(shape=(32,10), name="noise", dtype=tf.float64), dtype=tf.float64)(i)
 
@@ -96,7 +97,7 @@ def aug(A0, batch_size):
     dA = tf.einsum('ijk->ik', dA)
     cr_sum = tf.einsum('ijk->ik', cr)
     
-    A = (A0 + dA*(2*omegac)/Nomega)/(cr_sum + 1)
+    A = (A0 + dA*(2*omegac)/(Nomega-1))/(cr_sum + 1)
     
     return A
     
@@ -122,7 +123,7 @@ def create_model_aug(noise_level, nodes):
     output_shape = Nomega
     
     inputs = keras.Input(shape=(Lmax,))
-    x = Dense(nodes, input_shape = (Lmax,), activation='selu')((2*omegac)/Nomega*inputs)
+    x = Dense(nodes, input_shape = (Lmax,), activation='selu')((2*omegac)/(Nomega-1)*inputs)
     x = ResResResBlocks(x, nodes, 0.1, 2, 2, 2, 2)
     outputs = Dense(Nomega, activation='softmax')(x)
     
@@ -151,7 +152,7 @@ def create_model(noise_level, nodes):
     output_shape = Nomega
     
     inputs = keras.Input(shape=(Lmax,))
-    x = Dense(nodes, input_shape = (Lmax,), activation='selu')((2*omegac)/Nomega*inputs)
+    x = Dense(nodes, input_shape = (Lmax,), activation='selu')((2*omegac)/(Nomega-1)*inputs)
     x = ResResResBlocks(x, nodes, 0.1, 2, 2, 2, 2)
     outputs = Dense(Nomega, activation='softmax')(x)
     
