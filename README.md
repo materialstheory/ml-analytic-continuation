@@ -12,7 +12,7 @@ model
 
 * models_multiple_srun.py
 * trained model files for various noise levels and various dataset
-* AnalyticContinuation.ipynb for demo [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/googlecolab/colabtools/blob/master/notebooks/colab-github-demo.ipynb)
+* AnalyticContinuation.ipynb for demo [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/materialstheory/ml-analytic-continuation/blob/main/model/AnalyticContinuation.ipynb)
 * readme.md: how to train models for other kernel matrices
 
 data
