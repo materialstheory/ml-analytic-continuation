@@ -1,5 +1,5 @@
 """
-To generate spectral functions (both Arsenault and easy): final version
+To generate spectral functions (both recp1 and recp2): final version
 """
 
 import numpy as np
@@ -48,7 +48,7 @@ def A_w_scaled(wr, sigmar, ar, cr, omega, factor):
     
     return A_w
 
-class Arsenault_spectral_function:
+class recp_spectral_function:
     """
     Generates spectral functions with piecewise probabilities
     each instance is a set of settings
@@ -153,7 +153,7 @@ class Arsenault_spectral_function:
                     (wr, sigmar, ar, cr, R, R_center)))  
 
         total_time = time.time() - start_time
-        print("Arsenault_spectral_function: " + str(len(self.res["wr"])) + "spectral functions are generated in " + str(total_time) + " s.")       
+        print("recp_spectral_function: " + str(len(self.res["wr"])) + "spectral functions are generated in " + str(total_time) + " s.")       
         return copy.deepcopy(self.res)     
     
     def print(self, res, omega, factor = 1):
@@ -272,16 +272,16 @@ class Arsenault_spectral_function:
             
         return copy.deepcopy(self.res_half2), copy.deepcopy(self.res_half1), copy.deepcopy(self.res_minus1peak), copy.deepcopy(self.res_1peak), copy.deepcopy(self.res_minus2peak), copy.deepcopy(self.res_2peak)
         
-def load_create(Arsenault_spectral_function, n_repeat, filename):
+def load_create(recp_spectral_function, n_repeat, filename):
     """
-    Arsenault_spectral_function: Arsenault_spectral_function class
+    recp_spectral_function: recp_spectral_function class
     n_repeat: number of spectral functions to generate
     filename: input parameter files
-    return: Arsenault_spectral_function class object
+    return: recp_spectral_function class object
     """
     params = np.loadtxt(filename)
     omega = np.linspace(-1, 1, Nomega)
-    return_obj = Arsenault_spectral_function(omega, 
+    return_obj = recp_spectral_function(omega, 
                                              params[0:3], params[3:5], params[5:7], 
                                              params[7], params[8:12], params[12], params[13])
     
@@ -289,24 +289,24 @@ def load_create(Arsenault_spectral_function, n_repeat, filename):
     return return_obj
 
 
-def augmentation(Arsenault):
+def augmentation(recp):
     """
-    Arsenault: Arsenault_spectral_function instance
+    recp: recp_spectral_function instance
     return linear and scaling augmentated spectral functions and the original one
     """
 
     omega = np.linspace(-omegac, omegac, Nomega)
 
-    A = Arsenault.print(Arsenault.res, omega)
-    _ = Arsenault.build_linear()
-    A_p1 = Arsenault.print(Arsenault.res_1peak, omega)
-    A_pm1 = Arsenault.print(Arsenault.res_minus1peak, omega)
-    A_half1 = Arsenault.print(Arsenault.res_half1, omega)
-    A_half2 = Arsenault.print(Arsenault.res_half2, omega)
-    A_12 = Arsenault.print(Arsenault.res, omega, 1.2)
-    A_14 = Arsenault.print(Arsenault.res, omega, 1.4)
-    A_16 = Arsenault.print(Arsenault.res, omega, 1.6)
-    A_18 = Arsenault.print(Arsenault.res, omega, 1.8)
+    A = recp.print(recp.res, omega)
+    _ = recp.build_linear()
+    A_p1 = recp.print(recp.res_1peak, omega)
+    A_pm1 = recp.print(recp.res_minus1peak, omega)
+    A_half1 = recp.print(recp.res_half1, omega)
+    A_half2 = recp.print(recp.res_half2, omega)
+    A_12 = recp.print(recp.res, omega, 1.2)
+    A_14 = recp.print(recp.res, omega, 1.4)
+    A_16 = recp.print(recp.res, omega, 1.6)
+    A_18 = recp.print(recp.res, omega, 1.8)
     
     return np.concatenate([A, A_p1, A_pm1, A_half1, A_half2, A_12, A_14, A_16, A_18], axis = 0)
 
@@ -319,29 +319,29 @@ def main():
     print('Starting generating spectral functions A_omega')
 
     np.random.seed(42) #123456 for test set
-    Arsenault_train = load_create(Arsenault_spectral_function, repetitions, "Arsenault_param.txt")
-    Arsenault_val   = load_create(Arsenault_spectral_function, repetitions, "Arsenault_param.txt")
-    easy_train      = load_create(Arsenault_spectral_function, repetitions, "Arsenault_easy_param.txt")
-    easy_val        = load_create(Arsenault_spectral_function, repetitions, "Arsenault_easy_param.txt")
+    recp1_train = load_create(recp_spectral_function, repetitions, "recp1_param.txt")
+    recp1_val   = load_create(recp_spectral_function, repetitions, "recp1_param.txt")
+    recp2_train      = load_create(recp_spectral_function, repetitions, "recp2_param.txt")
+    recp2_val        = load_create(recp_spectral_function, repetitions, "recp2_param.txt")
 
 
     omega = np.linspace(-omegac, omegac, Nomega)
-    A_omega_train_aug = augmentation(Arsenault_train)
-    A_omega_val_aug = augmentation(Arsenault_val)
-    A_easy_omega_train_aug = augmentation(easy_train)
-    A_easy_omega_val_aug = augmentation(easy_val)
+    A_omega_train_aug = augmentation(recp1_train)
+    A_omega_val_aug = augmentation(recp1_val)
+    A_recp2_omega_train_aug = augmentation(recp2_train)
+    A_recp2_omega_val_aug = augmentation(recp2_val)
     
     normalize = lambda arr: arr*(2*omegac)/(Nomega-1)
 
     A_omega_train_aug = normalize(A_omega_train_aug)
     A_omega_val_aug = normalize(A_omega_val_aug)
-    A_easy_omega_train_aug = normalize(A_easy_omega_train_aug)
-    A_easy_omega_val_aug = normalize(A_easy_omega_val_aug)
+    A_recp2_omega_train_aug = normalize(A_recp2_omega_train_aug)
+    A_recp2_omega_val_aug = normalize(A_recp2_omega_val_aug)
     
     np.save("A_omega_train.npy", A_omega_train_aug)
     np.save("A_omega_val.npy", A_omega_val_aug)
-    np.save("A_easy_omega_train.npy", A_easy_omega_train_aug)
-    np.save("A_easy_omega_val.npy", A_easy_omega_val_aug)
+    np.save("A_recp2_omega_train.npy", A_recp2_omega_train_aug)
+    np.save("A_recp2_omega_val.npy", A_recp2_omega_val_aug)
           
     total_time = time.time() - start_time
     print('\nDONE')

@@ -245,9 +245,9 @@ def main(training_data, validation_data, noise_level, prefix):
 
 if __name__ == "__main__":
     print("running .py...")
-    training_data= str(sys.argv[1])  # file name e.g. "A_omega_train.npy" "A_easy_omega_train.npy"
-    validation_data = str(sys.argv[2]) # file name e.g. "A_omega_val.npy" "A_easy_omega_val.npy"
+    training_data= str(sys.argv[1])  # file name e.g. "A_omega_train.npy" "A_recp2_omega_train.npy"
+    validation_data = str(sys.argv[2]) # file name e.g. "A_omega_val.npy" "A_recp2_omega_val.npy"
     noise_level = int(sys.argv[3])  # negative exponent, 2, 3, 4
-    prefix = str(sys.argv[4]) # "Arsenault" or "easy"
+    prefix = str(sys.argv[4]) # "recp1" or "recp2"
 
     main(training_data, validation_data, noise_level, prefix)
