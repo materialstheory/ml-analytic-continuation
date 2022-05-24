@@ -11,10 +11,9 @@ The main functionality of predicting spectral functions with their uncertainty
 can be easily run in the demo notebook
 `model/AnalyticContinuation.ipynb`: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/materialstheory/ml-analytic-continuation/blob/main/model/AnalyticContinuation.ipynb)
 
-Copyright (C) 2022, Materials Theory Group, ETH Zurich, Switzerland
-
 Written by Rong Zhang
 under the supervision of Maximilian E. Merkel and Claude Ederer
+from the Materials Theory Group at ETH Zurich.
 
 ## Content of the repository
 
@@ -27,3 +26,15 @@ a different data set. Training requires the content of `kernel/` and `data/`,
 whereas the pre-trained model can be run directly on the data from `test-data/`
 
 See also the READMEs inside the folders.
+
+## Copyright and license
+
+Copyright (C) 2022 ETH Zurich, Rong Zhang, Maximilian E. Merkel; Materials Theory Group, D-MATL
+
+This file is part of the repository ml-analytic-continuation.
+
+ml-analytic-continuation is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+ml-analytic-continuation is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with ml-analytic-continuation. If not, see <https://www.gnu.org/licenses/>.
