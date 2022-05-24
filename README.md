@@ -1,5 +1,7 @@
 # Machine-learning approach for the DMFT analytic continuation
 
+[![DOI](https://zenodo.org/badge/485062333.svg)](https://zenodo.org/badge/latestdoi/485062333)
+
 ## Overview
 
 This repository contains the code and data for performing the quantum many-body

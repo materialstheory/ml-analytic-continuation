@@ -1,0 +1,31 @@
+{
+    "description": "This repository contains codes and some data for the machine learning for analytic continuation project. It uses a multi-level residual network to continue the DMFT Green's function to the spectral function as presented in the accompanying paper.", 
+    "license": "other-open", 
+    "title": "ml-analytic-continuation, v1.0", 
+    "version": "v1.0", 
+    "upload_type": "software", 
+    "publication_date": "2022-05-24", 
+    "creators": [
+        {
+            "name": "Rong Zhang"
+        }, 
+        {
+            "name": "Maximilian E. Merkel"
+        }
+    ], 
+    "access_right": "open", 
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/materialstheory/ml-analytic-continuation/tree/v1.0", 
+            "relation": "isSupplementTo"
+        }, 
+        {
+            "scheme": "doi", 
+            "identifier": "10.5281/zenodo.6577293", 
+            "relation": "isVersionOf"
+        }
+    ]
+}
+
+
