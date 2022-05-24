@@ -6,7 +6,7 @@
 # Generate spectral functions for other temperatures or other parameter values
 
 * "recp1" and "recp2" denote recipe 1 and 2
-* generate recp1 and recp2, training and validation datasets, each of size 32000*9 (a factor of 9 because we extend the dataset according to rules described in our paper)
+* generate recp1 and recp2, training and validation datasets, each of size 32000*9 (a factor of 9 because the dataset is extended according to rules described in our paper)
 with the command
   ```
   python spectral_function.py 32000
