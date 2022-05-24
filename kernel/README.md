@@ -1,11 +1,15 @@
-* Aw2Gl.ipynb: construct kernel matrix convert Aw to Gl
-* Aw2Gl-precise.ipynb: construct precise version of the above with multi-precision library
-* o2l_b40.npy: an example convert Aw (o) to Gl (l) at beta = 40, [-8, 8], N = 800
-* u_mp.npy, s_mp.npy, vh_mp.npy: singular value decomposition of the EXACT version of the kernel matrix labeled by o2l_b40, computed with multi-precision library (mp).
-* readme.md: how to generate other kernel matrices
+# Files in the folder
 
-# Generate kernel matrices
+* `Aw2Gl.ipynb`: constructs kernel matrix to convert $A(\omega)$ ("`Aw`") to $G_l$ ("`Gl`")
+* `Aw2Gl-precise.py`: same as above but using a multi-precision library.
+In our tests that did not seem to influence results much.
+* `o2l_b40.npy`: the pre-computed kernel to convert Aw (o) to Gl (l)
+at an inverse temperature $\beta = 40$,
+a frequency range of $\omega \in [-8, 8]$, on a grid of $N = 800$ points
+* `u_mp.npy`, `s_mp.npy`, `vh_mp.npy`: singular value decomposition of the multi-precision version of the above kernel matrix
 
-* For other inverse temperatures/number of Legendre basis, in Aw2Gl.ipynb (convert $A(\omega)$ to $G_{l}$) cell [2], change the beta/lmax variable
-* For other omega grid, in Aw2Gl.ipynb, cell [1], change the omega assignment (uniform grid only)
-* To generate the exact kernel matrix for beta = 40, l = 80, use Aw2Gl-precise.py
+# Generate different kernel matrices
+
+* For other inverse temperatures/size of Legendre basis, in `Aw2Gl.ipynb` (convert $A(\omega)$ to $G_{l}$) cell [2], change the beta/lmax variable
+* For other omega grid, in `Aw2Gl.ipynb`, cell [1], change the omega assignment (uniform grid only)
+* To generate the exact kernel matrix for beta = 40, l = 80, use `Aw2Gl-precise.py`
